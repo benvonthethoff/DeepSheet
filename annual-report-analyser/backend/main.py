@@ -4,7 +4,7 @@ os.environ["no_proxy"] = "*"
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from edgar import resolve_cik
+from edgar import resolve_cik, fetch_financials
 
 app = FastAPI()
 
@@ -27,5 +27,15 @@ async def get_cik(ticker: str):
     try:
         cik = resolve_cik(ticker)
         return {"ticker": ticker, "cik": cik}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.get("/financials")
+async def get_financials(ticker: str):
+    try:
+        cik = resolve_cik(ticker)
+        data = fetch_financials(cik, ticker)
+        return data
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
