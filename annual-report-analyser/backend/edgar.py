@@ -3,7 +3,11 @@ from __future__ import annotations
 import json
 import os
 
+import re
 import requests
+import time
+
+from bs4 import BeautifulSoup
 
 CACHE_DIR = "cache"
 DATA_DIR = "data"
@@ -257,4 +261,137 @@ def fetch_filing_urls(cik: str, ticker: str) -> list[dict]:
             break
 
     cache_set(cache_key, results)
+    return results
+
+
+def download_filing(ticker: str, year: str, url: str) -> str | None:
+    save_dir = f"{FILINGS_DIR}/{ticker.upper()}"
+    save_path = f"{save_dir}/{year}_10k.html"
+
+    if os.path.exists(save_path):
+        print(f"[download_filing] Already exists, skipping: {save_path}")
+        return save_path
+
+    os.makedirs(save_dir, exist_ok=True)
+
+    try:
+        session = requests.Session()
+        session.trust_env = False
+        print(f"[download_filing] Downloading {ticker} {year} from {url}")
+        response = session.get(
+            url,
+            headers={"User-Agent": "DeepSheet benvonai@gmail.com"}
+        )
+        response.raise_for_status()
+
+        with open(save_path, "w", encoding="utf-8") as f:
+            f.write(response.text)
+
+        print(f"[download_filing] Saved to {save_path}")
+        time.sleep(0.5)
+        return save_path
+
+    except Exception as e:
+        print(f"[download_filing] ERROR {ticker} {year}: {type(e).__name__}: {e}")
+        return None
+
+
+def download_all_filings(ticker: str, filings: list[dict]) -> list[dict]:
+    results = []
+    for filing in filings:
+        path = download_filing(ticker, filing["year"], filing["url"])
+        results.append({**filing, "localPath": path})
+    return results
+
+
+TOKEN_LIMITS = {
+    "item1":  2000,
+    "item1a": 3000,
+    "item7":  8000,
+}
+AVG_CHARS_PER_TOKEN = 4
+
+def extract_sections(local_path: str) -> dict:
+    """
+    Opens a saved 10-K HTML file and extracts text from
+    Item 1, Item 1A, and Item 7. Trims each to its token limit.
+    """
+    try:
+        with open(local_path, "r", encoding="utf-8") as f:
+            html = f.read()
+
+        soup = BeautifulSoup(html, "html.parser")
+        text = soup.get_text(separator=" ")
+        text = re.sub(r'\s+', ' ', text).strip()
+
+        def extract_between(text: str, start_pattern: str, end_pattern: str, max_tokens: int) -> str | None:
+            # Find all matches — first is TOC, second is actual content
+            matches = list(re.finditer(start_pattern, text, re.IGNORECASE))
+            if len(matches) < 2:
+                # Fallback to first match if no TOC present
+                match = matches[0] if matches else None
+            else:
+                match = matches[1]
+
+            if not match:
+                return None
+
+            start_pos = match.end()
+            end_match = re.search(end_pattern, text[start_pos:], re.IGNORECASE)
+
+            if not end_match:
+                section = text[start_pos:start_pos + max_tokens * AVG_CHARS_PER_TOKEN]
+            else:
+                section = text[start_pos:start_pos + end_match.start()]
+
+            max_chars = max_tokens * AVG_CHARS_PER_TOKEN
+            return section[:max_chars].strip()
+
+        item1 = extract_between(
+            text,
+            r'Item\s+1[\.\s]+Business',
+            r'Item\s+1A[\.\s]+Risk Factors',
+            TOKEN_LIMITS["item1"]
+        )
+        item1a = extract_between(
+            text,
+            r'Item\s+1A[\.\s]+Risk Factors',
+            r'Item\s+1B[\.\s]+',
+            TOKEN_LIMITS["item1a"]
+        )
+        item7 = extract_between(
+            text,
+            r'Item\s+7[\.\s]+Management',
+            r'Item\s+7A[\.\s]+',
+            TOKEN_LIMITS["item7"]
+        )
+
+        return {
+            "item1":  item1,
+            "item1a": item1a,
+            "item7":  item7,
+        }
+
+    except Exception as e:
+        print(f"[extract_sections] ERROR {local_path}: {type(e).__name__}: {e}")
+        return {
+            "item1":  None,
+            "item1a": None,
+            "item7":  None,
+        }
+
+
+def extract_all_sections(filings: list[dict]) -> list[dict]:
+    """
+    Runs extract_sections on each filing that has a valid localPath.
+    Returns the filings list with a 'sections' field added to each.
+    """
+    results = []
+    for filing in filings:
+        local_path = filing.get("localPath")
+        if local_path and os.path.exists(local_path):
+            sections = extract_sections(local_path)
+        else:
+            sections = {"item1": None, "item1a": None, "item7": None}
+        results.append({**filing, "sections": sections})
     return results
