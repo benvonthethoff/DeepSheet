@@ -1,0 +1,14 @@
+Here are 5 years of management narrative extractions for {ticker}:
+
+{qual_years_json}
+
+Synthesise into a JSON object with exactly this structure:
+{{
+  "ticker": "{ticker}",
+  "toneEvolution": "2 sentences on how management tone has shifted across the 5 years",
+  "recurringThemes": ["max 4 themes that appear consistently across multiple years"],
+  "emergingThemes": ["max 3 themes that are new or growing in prominence"],
+  "disappearingThemes": ["max 3 themes that were prominent but have faded"],
+  "narrativeCredibility": "2 sentences on whether management's narrative has been consistent and coherent",
+  "overallNarrativeArc": "3-4 sentences — the complete management story arc across 5 years"
+}}

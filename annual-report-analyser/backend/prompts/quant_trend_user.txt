@@ -1,0 +1,34 @@
+Here are 5 years of quantitative analysis for {ticker}:
+
+Per year interpretations:
+{quant_years_json}
+
+Five year signal summary:
+{five_year_signals_json}
+
+Synthesise into a JSON object with exactly this structure:
+{{
+  "ticker": "{ticker}",
+  "revenueTrajectory": {{
+    "summary": "2-3 sentences on the revenue story across 5 years",
+    "inflectionPoints": ["brief phrases of key turning points"],
+    "direction": "growing/stable/declining/mixed"
+  }},
+  "marginTrajectory": {{
+    "summary": "2-3 sentences on margin evolution",
+    "inflectionPoints": ["brief phrases"],
+    "direction": "expanding/stable/compressing/mixed"
+  }},
+  "fcfTrajectory": {{
+    "summary": "2-3 sentences on FCF quality and trend",
+    "inflectionPoints": ["brief phrases"],
+    "direction": "growing/stable/declining/volatile"
+  }},
+  "earningsQualityTrajectory": {{
+    "summary": "2-3 sentences on earnings quality trend",
+    "direction": "improving/stable/deteriorating"
+  }},
+  "crossMetricInsights": "2-3 sentences on the most important relationships between metrics across the 5 years",
+  "overallTrajectory": "improving/stable/deteriorating/mixed",
+  "overallSummary": "3-4 sentences — the complete quantitative story of this business over 5 years"
+}}

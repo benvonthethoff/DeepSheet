@@ -1,0 +1,34 @@
+Here is the Item 7 MD&A section for {ticker} fiscal year {year}:
+
+{item7_text}
+
+Extract what management is claiming and return a JSON object with exactly this structure:
+{{
+  "year": {year},
+  "ticker": "{ticker}",
+  "managementTone": "confident/cautious/defensive/neutral",
+  "keyThemes": [
+    "4-5 most prominent topics management actually discussed this year, in their own terms"
+  ],
+  "performance": {{
+    "revenue": "2 sentences on what management says drove revenue — or null",
+    "margins": "2 sentences on what management says drove margin performance — or null",
+    "cashFlow": "2 sentences on what management says about cash flow and liquidity — or null",
+    "balanceSheet": "2 sentences on what management says about debt, assets, liabilities — or null",
+    "capitalAllocation": "2 sentences on what management says about buybacks, dividends, acquisitions, capex — or null"
+  }},
+  "operations": {{
+    "segments": "2 sentences on geographic or business segment performance — or null",
+    "supplyChain": "2 sentences on supply chain commentary — or null",
+    "headcount": "2 sentences on workforce or headcount commentary — or null",
+    "macro": "2 sentences on how management frames the external environment — or null"
+  }},
+  "forward": {{
+    "outlook": "2 sentences on future performance expectations — or null",
+    "investmentPriorities": "2 sentences on where management is investing — or null",
+    "guidanceOrTargets": "2 sentences on any specific targets or guidance given — or null"
+  }},
+  "risksMentioned": ["max 5 brief phrases of risks mentioned in this section"],
+  "notableItems": ["max 5 brief phrases of one-off items mentioned"],
+  "overallNarrative": "3-4 sentences capturing the unfiltered story management is telling this year"
+}}

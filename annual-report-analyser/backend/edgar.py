@@ -2,31 +2,15 @@ from __future__ import annotations
 
 import json
 import os
-
 import re
 import requests
 import time
 
 from bs4 import BeautifulSoup
 
-CACHE_DIR = "cache"
-DATA_DIR = "data"
+from storage import cache_get, cache_set, CACHE_DIR, DATA_DIR, FILINGS_DIR
+
 COMPANY_TICKERS_PATH = f"{DATA_DIR}/company_tickers.json"
-
-
-def cache_get(key: str):
-    path = f"{CACHE_DIR}/{key}.json"
-    if os.path.exists(path):
-        with open(path, "r") as f:
-            return json.load(f)
-    return None
-
-
-def cache_set(key: str, data):
-    os.makedirs(CACHE_DIR, exist_ok=True)
-    path = f"{CACHE_DIR}/{key}.json"
-    with open(path, "w") as f:
-        json.dump(data, f)
 
 
 def resolve_cik(ticker: str) -> str:
@@ -221,8 +205,6 @@ def calculate_valuation_ratios(stock_data: dict, derived: list[dict]) -> dict:
             "priceFCF": None,
         }
 
-
-FILINGS_DIR = "data/filings"
 
 def fetch_filing_urls(cik: str, ticker: str) -> list[dict]:
     cache_key = f"{ticker}_filings"

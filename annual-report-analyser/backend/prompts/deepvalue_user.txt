@@ -1,0 +1,45 @@
+Here is the deep value analysis inputs for {ticker}:
+
+Current Valuation:
+- Price: ${price}
+- P/E Ratio: {pe_ratio}x
+- Price/FCF: {price_fcf}x
+- Market Cap: ${market_cap_billions}B
+
+Quantitative Trend:
+{quant_trend_json}
+
+Management Narrative Trend:
+{qual_trend_json}
+
+Risk Evolution:
+{risk_trend_json}
+
+Return a JSON object with exactly this structure:
+{{
+  "ticker": "{ticker}",
+  "businessQuality": {{
+    "verdict": "high/medium/low",
+    "summary": "2-3 sentences on the fundamental quality of the business"
+  }},
+  "trajectory": {{
+    "verdict": "improving/stable/deteriorating/mixed",
+    "summary": "2-3 sentences on where the business is heading"
+  }},
+  "managementAssessment": {{
+    "credibility": "high/medium/low",
+    "summary": "2-3 sentences on management trustworthiness and narrative consistency"
+  }},
+  "riskAssessment": {{
+    "verdict": "low/moderate/elevated/high",
+    "summary": "2-3 sentences on the most material risks to the investment thesis"
+  }},
+  "valuation": {{
+    "peRatio": {pe_ratio},
+    "priceFCF": {price_fcf},
+    "verdict": "cheap/fair/expensive",
+    "summary": "2-3 sentences on whether the current price is justified"
+  }},
+  "whatMarketMayBeMissing": "2-3 sentences on the key insight the market may be underpricing or overpricing",
+  "overallVerdict": "2-3 sentences — the bottom line deep value assessment"
+}}

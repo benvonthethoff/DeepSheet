@@ -1,0 +1,24 @@
+Here is the Item 1A Risk Factors section for {ticker} fiscal year {year}:
+
+{item1a_text}
+
+Return a JSON object with exactly this structure — one entry per category, no exceptions:
+{{
+  "year": {year},
+  "ticker": "{ticker}",
+  "risks": {{
+    "Macroeconomic": {{ "risk": "1 sentence summary or null if not identified in annual report", "severity": "high/medium/low/null" }},
+    "Geopolitical": {{ "risk": "1 sentence summary or null if not identified in annual report", "severity": "high/medium/low/null" }},
+    "Regulatory": {{ "risk": "1 sentence summary or null if not identified in annual report", "severity": "high/medium/low/null" }},
+    "Competitive": {{ "risk": "1 sentence summary or null if not identified in annual report", "severity": "high/medium/low/null" }},
+    "Technology": {{ "risk": "1 sentence summary or null if not identified in annual report", "severity": "high/medium/low/null" }},
+    "Operational": {{ "risk": "1 sentence summary or null if not identified in annual report", "severity": "high/medium/low/null" }},
+    "Legal": {{ "risk": "1 sentence summary or null if not identified in annual report", "severity": "high/medium/low/null" }},
+    "Financial": {{ "risk": "1 sentence summary or null if not identified in annual report", "severity": "high/medium/low/null" }},
+    "Reputational": {{ "risk": "1 sentence summary or null if not identified in annual report", "severity": "high/medium/low/null" }},
+    "Climate": {{ "risk": "1 sentence summary or null if not identified in annual report", "severity": "high/medium/low/null" }}
+  }},
+  "newRisks": ["max 3 brief phrases of genuinely new or escalated risks this year"],
+  "overallRiskProfile": "low/moderate/elevated/high",
+  "overallSummary": "2 sentences maximum on dominant risk themes"
+}}

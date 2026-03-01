@@ -1,0 +1,25 @@
+Here are 4 years of risk registers for {ticker} (2022-2025):
+
+{risk_years_json}
+
+Synthesise into a JSON object with exactly this structure:
+{{
+  "ticker": "{ticker}",
+  "riskEvolution": {{
+    "Macroeconomic": "stable/escalating/de-escalating/new/resolved or null",
+    "Geopolitical": "stable/escalating/de-escalating/new/resolved or null",
+    "Regulatory": "stable/escalating/de-escalating/new/resolved or null",
+    "Competitive": "stable/escalating/de-escalating/new/resolved or null",
+    "Technology": "stable/escalating/de-escalating/new/resolved or null",
+    "Operational": "stable/escalating/de-escalating/new/resolved or null",
+    "Legal": "stable/escalating/de-escalating/new/resolved or null",
+    "Financial": "stable/escalating/de-escalating/new/resolved or null",
+    "Reputational": "stable/escalating/de-escalating/new/resolved or null",
+    "Climate": "stable/escalating/de-escalating/new/resolved or null"
+  }},
+  "persistentHighRisks": ["max 3 categories that have been high severity consistently"],
+  "newRisks": ["max 3 risks that have emerged in recent years"],
+  "resolvedRisks": ["max 3 risks that have diminished or resolved"],
+  "overallRiskTrajectory": "improving/stable/deteriorating",
+  "overallSummary": "2-3 sentences on the risk profile evolution"
+}}

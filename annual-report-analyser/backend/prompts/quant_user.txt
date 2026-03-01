@@ -1,0 +1,40 @@
+Here are the financial signals for {ticker} in {year}:
+
+Raw figures:
+- Revenue YoY Growth: {revenue_growth}%
+- Gross Margin: {gross_margin}%
+- FCF: ${fcf_billions}B
+- Net Income: ${net_income_billions}B
+
+Signal flags:
+{signals_json}
+
+Five year context:
+{five_year_json}
+
+Return a JSON object with exactly this structure:
+{{
+  "year": {year},
+  "ticker": "{ticker}",
+  "revenueInterpretation": {{
+    "interpretation": "2-3 sentence interpretation or null if insufficient data",
+    "confidence": "high/medium/low",
+    "gap": "explanation if confidence is low or null"
+  }},
+  "marginInterpretation": {{
+    "interpretation": "2-3 sentence interpretation or null if insufficient data",
+    "confidence": "high/medium/low",
+    "gap": "explanation if confidence is low or null"
+  }},
+  "fcfInterpretation": {{
+    "interpretation": "2-3 sentence interpretation or null if insufficient data",
+    "confidence": "high/medium/low",
+    "gap": "explanation if confidence is low or null"
+  }},
+  "earningsQualityInterpretation": {{
+    "interpretation": "2-3 sentence interpretation or null if insufficient data",
+    "confidence": "high/medium/low",
+    "gap": "explanation if confidence is low or null"
+  }},
+  "overallReading": "One paragraph independent assessment of this year's financial performance based purely on the numbers"
+}}
