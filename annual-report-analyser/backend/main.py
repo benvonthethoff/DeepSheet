@@ -4,6 +4,10 @@ dotenv.load_dotenv()
 import os
 os.environ["no_proxy"] = "*"
 
+import json
+import requests
+import anthropic
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -40,6 +44,10 @@ async def get_cik(ticker: str):
 async def get_financials(ticker: str):
     try:
         cik = resolve_cik(ticker)
+    except ValueError:
+        raise HTTPException(status_code=404, detail=f"Ticker '{ticker.upper()}' not found in EDGAR database")
+
+    try:
         data = fetch_financials(cik, ticker)
         data["derived"] = calculate_derived(data)
         data["stockData"] = fetch_stock_data(ticker)
@@ -63,5 +71,18 @@ async def get_financials(ticker: str):
             data["stockData"]
         )
         return data
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+
+    except requests.HTTPError as e:
+        status = e.response.status_code if e.response is not None else 0
+        if status == 429:
+            raise HTTPException(status_code=503, detail="EDGAR rate limit hit — wait 10 seconds and retry")
+        raise HTTPException(status_code=502, detail=f"EDGAR request failed ({status})")
+
+    except json.JSONDecodeError as e:
+        raise HTTPException(status_code=502, detail=f"Claude returned malformed JSON: {str(e)}")
+
+    except anthropic.APIError as e:
+        raise HTTPException(status_code=502, detail=f"Claude API error: {str(e)}")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}")
