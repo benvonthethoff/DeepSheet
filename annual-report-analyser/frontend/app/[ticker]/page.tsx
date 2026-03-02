@@ -3,12 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import PageHeader from "@/components/financials/PageHeader";
+import ValuationCard from "@/components/financials/ValuationCard";
 import FinancialTable from "@/components/financials/FinancialTable";
-
-interface FinancialsData {
-  ticker: string;
-  [key: string]: unknown;
-}
+import { FinancialsData } from "@/types/financials";
 
 interface ApiError {
   detail: string;
@@ -38,6 +35,8 @@ export default function TickerAnalysis() {
         }
 
         const result: FinancialsData = await response.json();
+        console.log("stockData:", JSON.stringify(result.stockData, null, 2));
+        console.log("valuationRatios:", JSON.stringify(result.valuationRatios, null, 2));
         setData(result);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An unexpected error occurred");
@@ -82,8 +81,9 @@ export default function TickerAnalysis() {
     return (
       <div className="min-h-screen bg-[#09090b]">
         <main className="mx-auto w-full max-w-4xl px-6 py-12">
-            <PageHeader ticker={ticker as string} />
-            <FinancialTable data={data} />
+          <PageHeader ticker={ticker as string} />
+          <ValuationCard data={data} />
+          <FinancialTable data={data} />
           <details className="mt-8">
             <summary className="cursor-pointer font-mono text-sm text-[#52525b] hover:text-[#71717a]">
               View raw JSON response

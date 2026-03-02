@@ -11,7 +11,8 @@ import anthropic
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from edgar import resolve_cik, fetch_financials, calculate_derived, fetch_stock_data, calculate_valuation_ratios, fetch_filing_urls, download_all_filings, extract_all_sections
+from edgar import resolve_cik, fetch_financials, calculate_derived, calculate_valuation_ratios, fetch_filing_urls, download_all_filings, extract_all_sections
+from yfinance_data import fetch_stock_data
 from financials import run_rules_engine
 from ai import generate_all_quant_narratives, generate_all_qual_narratives, generate_all_risk_narratives, generate_quant_trend, generate_qual_trend, generate_risk_trend, generate_deep_value
 
@@ -42,6 +43,7 @@ async def get_cik(ticker: str):
 
 @app.get("/financials")
 async def get_financials(ticker: str):
+    print(f"[financials] starting request for {ticker}")
     try:
         cik = resolve_cik(ticker)
     except ValueError:

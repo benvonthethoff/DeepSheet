@@ -44,7 +44,9 @@ def resolve_cik(ticker: str) -> str:
 
 def fetch_concept(cik: str, ticker: str, concept: str) -> dict:
     cache_key = f"{ticker}_concept_{concept}"
+    print(f"[fetch_concept] checking cache for {cache_key}")
     data = cache_get(cache_key)
+    print(f"[fetch_concept] cache hit: {data is not None}")
 
     if data is None:
         session = requests.Session()
@@ -156,27 +158,6 @@ def calculate_derived(financials: dict) -> list[dict]:
             prev_revenue = revenue
 
     return rows
-
-
-def fetch_stock_data(ticker: str) -> dict:
-    try:
-        import yfinance as yf
-        stock = yf.Ticker(ticker)
-        info = stock.info
-        return {
-            "price":     info.get("currentPrice") or info.get("regularMarketPrice"),
-            "marketCap": info.get("marketCap"),
-            "peRatio":   info.get("trailingPE"),
-            "currency":  info.get("currency", "USD"),
-        }
-    except Exception as e:
-        print(f"[fetch_stock_data] ERROR: {type(e).__name__}: {e}")
-        return {
-            "price":     None,
-            "marketCap": None,
-            "peRatio":   None,
-            "currency":  None,
-        }
 
 
 def calculate_valuation_ratios(stock_data: dict, derived: list[dict]) -> dict:
